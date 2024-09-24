@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Current week is {{.Week}} | {{.FirstDate}} - {{.LastDate}}</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+
+    <script>
+        function updateWeek(weekChange) {
+            const currentWeek = parseInt(document.getElementById('week').innerText);
+            const newWeek = currentWeek + weekChange;
+
+            fetch(`/week?week=${newWeek}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('week').innerText = data.Week;
+                    document.getElementById('dateRange').innerText = `${data.FirstDate} - ${data.LastDate}`;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <div class="week-container">
+        <h1 id="week">{{.Week}}</h1>
+            <div class="button-container">
+            <button onclick="updateWeek(1)">+</button>
+            <button onclick="updateWeek(-1)">-</button>
+        </div>
+    </div>
+    <p id="dateRange">{{.FirstDate}} - {{.LastDate}}</p>
+</body>
+</html>

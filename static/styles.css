@@ -1,0 +1,43 @@
+body {
+    background-color: #2D3E50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.week-container {
+    display: flex;
+    align-items: center;
+}
+
+h1 {
+    font-size: 4em;
+    text-align: center;
+    color: white;
+    margin: 0 10px 0 0;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.week-button {
+    font-size: 1em;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+p {
+    font-size: 3em;
+    text-align: center;
+    color: white;
+}
