@@ -1,11 +1,15 @@
 # Use the latest official Golang image to build the application
 FROM golang:latest AS builder
 
+# Build arguments
+ARG TARGETOS
+ARG TARGETARCH
+
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
 # Copy go mod
-COPY go.mod ./
+COPY go.mod go.sum ./
 
 # Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
@@ -14,7 +18,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o main .
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o main .
 
 # Start a new stage from scratch
 FROM alpine:latest
