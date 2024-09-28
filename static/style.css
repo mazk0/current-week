@@ -28,8 +28,8 @@ h1 {
     border: none;
     color: white;
     cursor: pointer;
-    padding: 0;
-    margin: 0;
+    padding: 20px;
+    margin: 0 10px;
     line-height: 1;
     text-align: center;
 }
@@ -42,4 +42,29 @@ p {
     font-size: 3em;
     text-align: center;
     color: white;
+}
+
+.date-range {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.date-range .date,
+.date-range .dash {
+    white-space: nowrap;
+    padding: 0 10px;
+}
+
+/* Mobile styles */
+@media (max-width: 600px) {
+    .date-range {
+        flex-wrap: wrap;
+        text-align: center;
+    }
+
+    .date-range .dash {
+        width: 100%;
+    }
 }
