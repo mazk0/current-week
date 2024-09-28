@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	http.Handle("/", gzipHandler(http.HandlerFunc(weekHandler)))
-	http.Handle("/week", gzipHandler(http.HandlerFunc(weekUpdateHandler)))
+	http.Handle("/", cspHandler(gzipHandler(http.HandlerFunc(weekHandler))))
+	http.Handle("/week/", cspHandler(gzipHandler(http.HandlerFunc(weekUpdateHandler))))
 	http.Handle("/static/", http.StripPrefix("/static/", gzipHandler(http.FileServer(http.Dir("./static")))))
 
 	port := "8080"
