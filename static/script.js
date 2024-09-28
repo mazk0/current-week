@@ -1,3 +1,12 @@
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('prevWeekButton').addEventListener('click', function() {
+        updateWeek(-1);
+    });
+    document.getElementById('nextWeekButton').addEventListener('click', function() {
+        updateWeek(1);
+    });
+});
+
 function updateWeek(weekChange) {
     const currentWeek = parseInt(document.getElementById('week').innerText);
     const newWeek = currentWeek + weekChange;

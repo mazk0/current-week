@@ -11,7 +11,19 @@ import (
 	"time"
 )
 
+var tmpl *template.Template
+var version string
+
 func main() {
+	var err error
+	tmpl, err = template.ParseFiles("template.html")
+	if err != nil {
+		fmt.Printf("Error parsing template: %v\n", err)
+		return
+	}
+
+	version = strconv.FormatInt(time.Now().Unix(), 10)
+
 	http.Handle("/", cspHandler(gzipHandler(http.HandlerFunc(weekHandler))))
 	http.Handle("/week/", cspHandler(gzipHandler(http.HandlerFunc(weekUpdateHandler))))
 	http.Handle("/static/", http.StripPrefix("/static/", cacheHandler(gzipHandler(http.FileServer(http.Dir("./static"))))))
@@ -36,13 +48,7 @@ func weekHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	template, err := template.ParseFiles("template.html")
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Error parsing template: %v", err), http.StatusInternalServerError)
-		return
-	}
-
-	if err := template.Execute(w, weekInfo); err != nil {
+	if err := tmpl.Execute(w, weekInfo); err != nil {
 		http.Error(w, fmt.Sprintf("Error executing template: %v", err), http.StatusInternalServerError)
 	}
 }
@@ -87,5 +93,6 @@ func getWeekInfo(r *http.Request) (WeekInfo, error) {
 		Week:      week,
 		FirstDate: firstDateOfWeek.Format("2006-01-02"),
 		LastDate:  lastDateOfWeek.Format("2006-01-02"),
+		Version:   version,
 	}, nil
 }
