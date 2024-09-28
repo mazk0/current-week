@@ -105,6 +105,13 @@ func parseWeekYearFromRequest(r *http.Request) (int, int, error) {
 		}
 	}
 
+	numberOfWeeks := getNumberOfWeeks(year)
+	if week < 1 {
+		week = 1
+	} else if week > numberOfWeeks {
+		week = numberOfWeeks
+	}
+
 	return year, week, nil
 }
 
