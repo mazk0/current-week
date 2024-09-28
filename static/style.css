@@ -9,31 +9,33 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.week-container {
-    display: flex;
-    align-items: center;
-}
-
 h1 {
     font-size: 4em;
     text-align: center;
     color: white;
-    margin: 0 10px 0 0;
+    margin: 0 20px;
 }
 
-.button-container {
+.week-container {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .week-button {
-    font-size: 1em;
+    font-size: 4em;
     background: none;
     border: none;
     color: white;
     cursor: pointer;
     padding: 0;
     margin: 0;
+    line-height: 1;
+    text-align: center;
+}
+
+.week-button:focus {
+    outline: none;
 }
 
 p {
