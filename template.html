@@ -10,14 +10,14 @@
 </head>
 <body>
     <div class="week-container">
-        <button class="week-button" id="prevWeekButton">&#x276E;</button>
+        <button id="prevWeekButton" class="week-button">&#x276E;</button>
         <h1 id="week">{{.Week}}</h1>
-        <button class="week-button" id="nextWeekButton">&#x276F;</button>
+        <button id="nextWeekButton" class="week-button">&#x276F;</button>
     </div>
     <p id="dateRange" class="date-range">
-        <span class="date">{{.FirstDate}}</span>
+        <span id="firstDate" class="date">{{.FirstDate}}</span>
         <span class="dash"> - </span>
-        <span class="date">{{.LastDate}}</span>
+        <span id="lastDate" class="date">{{.LastDate}}</span>
     </p>
 </body>
 </html>
