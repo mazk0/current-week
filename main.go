@@ -14,6 +14,7 @@ func main() {
 	http.Handle("/", cspHandler(gzipHandler(http.HandlerFunc(weekHandler))))
 	http.Handle("/week/", cspHandler(gzipHandler(http.HandlerFunc(weekUpdateHandler))))
 	http.Handle("/static/", http.StripPrefix("/static/", cacheHandler(gzipHandler(http.FileServer(http.Dir("./static"))))))
+	http.Handle("/robots.txt", http.FileServer(http.Dir(".")))
 
 	port := "8080"
 	fmt.Printf("Server is running at http://localhost:%s\n", port)
