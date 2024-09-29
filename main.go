@@ -13,6 +13,7 @@ import (
 
 var tmpl *template.Template
 var version string
+var gitHubRepo = "https://github.com/mazk0/current-week"
 
 func main() {
 	var err error
@@ -119,9 +120,10 @@ func getWeekInfo(year int, week int) WeekInfo {
 	firstDateOfWeek, lastDateOfWeek := getFirstAndLastDateOfWeek(year, week)
 
 	return WeekInfo{
-		Week:      week,
-		FirstDate: firstDateOfWeek.Format("2006-01-02"),
-		LastDate:  lastDateOfWeek.Format("2006-01-02"),
-		Version:   version,
+		Week:       week,
+		FirstDate:  firstDateOfWeek.Format("2006-01-02"),
+		LastDate:   lastDateOfWeek.Format("2006-01-02"),
+		Version:    version,
+		GitHubRepo: gitHubRepo,
 	}
 }
