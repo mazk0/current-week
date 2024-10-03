@@ -26,8 +26,8 @@ func main() {
 	version = strconv.FormatInt(time.Now().Unix(), 10)
 
 	http.Handle("/", cspHandler(gzipHandler(http.HandlerFunc(weekHandler))))
-	http.Handle("/week/", cspHandler(gzipHandler(http.HandlerFunc(weekUpdateHandler))))
-	http.Handle("/week/current/", cspHandler(gzipHandler(http.HandlerFunc(currentWeekUpdateHandler))))
+	http.Handle("/week/", cspHandler(http.HandlerFunc(weekUpdateHandler)))
+	http.Handle("/week/current/", cspHandler(http.HandlerFunc(currentWeekUpdateHandler)))
 	http.Handle("/static/", http.StripPrefix("/static/", cacheHandler(gzipHandler(http.FileServer(http.Dir("./static"))))))
 	http.Handle("/robots.txt", http.FileServer(http.Dir(".")))
 
@@ -50,7 +50,16 @@ func weekHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	weekInfo := getWeekInfo(year, week)
+	firstDateOfWeek, lastDateOfWeek := getFirstAndLastDateOfWeek(year, week)
+
+	weekInfo := WeekInfoTemplate{
+		Week:       week,
+		FirstDate:  firstDateOfWeek.Format("2006-01-02"),
+		LastDate:   lastDateOfWeek.Format("2006-01-02"),
+		Version:    version,
+		GitHubRepo: gitHubRepo,
+	}
+
 	if err := tmpl.Execute(w, weekInfo); err != nil {
 		http.Error(w, fmt.Sprintf("Error executing template: %v", err), http.StatusInternalServerError)
 	}
@@ -120,10 +129,8 @@ func getWeekInfo(year int, week int) WeekInfo {
 	firstDateOfWeek, lastDateOfWeek := getFirstAndLastDateOfWeek(year, week)
 
 	return WeekInfo{
-		Week:       week,
-		FirstDate:  firstDateOfWeek.Format("2006-01-02"),
-		LastDate:   lastDateOfWeek.Format("2006-01-02"),
-		Version:    version,
-		GitHubRepo: gitHubRepo,
+		Week:      week,
+		FirstDate: firstDateOfWeek.Format("2006-01-02"),
+		LastDate:  lastDateOfWeek.Format("2006-01-02"),
 	}
 }
