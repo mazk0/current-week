@@ -1,20 +1,32 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('prevWeekButton').addEventListener('click', function() {
-        updateWeek(-1);
+        updateWeek('previous');
     });
     document.getElementById('nextWeekButton').addEventListener('click', function() {
-        updateWeek(1);
+        updateWeek('next');
     });
     document.getElementById('week').addEventListener('click', function() {
         resetToCurrentWeek();
     });
 });
 
-function updateWeek(weekChange) {
+function updateWeek(direction) {
     const currentWeek = parseInt(document.getElementById('week').innerText);
-    const newWeek = currentWeek + weekChange;
+    const firstDateText = document.getElementById('firstDate').textContent;
+    const firstDateYear = firstDateText.split('-')[0];
+    const lastDateText = document.getElementById('lastDate').textContent;
+    const lastDateYear = lastDateText.split('-')[0];
 
-    fetch(`/week/${newWeek}`)
+    const currentYear = parseInt(currentWeek) > 50 && (parseInt(firstDateYear) < parseInt(lastDateYear)) ? firstDateYear : lastDateYear;
+    console.log(currentYear);
+    let url = '';
+    if (direction === 'previous') {
+        url = `/previous/year/${currentYear}/week/${currentWeek}`;
+    } else if (direction === 'next') {
+        url = `/next/year/${currentYear}/week/${currentWeek}`;
+    }
+
+    fetch(url)
         .then(response => response.json())
         .then(data => updateWeekInfo(data))
         .catch(error => console.error('Error:', error));
