@@ -32,3 +32,14 @@ func getNumberOfWeeks(year int) int {
 
 	return lastWeek
 }
+
+func timeFromYearAndWeek(year, week int) time.Time {
+	// January 4th is always in the first week of the year
+	jan4 := time.Date(year, time.January, 4, 0, 0, 0, 0, time.UTC)
+	// Find the Monday of the first week of the year
+	_, isoWeek := jan4.ISOWeek()
+	// Calculate the difference in weeks
+	weekDiff := week - isoWeek
+	// Add the difference in weeks to the Monday of the first week
+	return jan4.AddDate(0, 0, weekDiff*7)
+}
