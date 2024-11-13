@@ -13,7 +13,7 @@ body {
 h1 {
     font-size: 4em;
     text-align: center;
-    margin: 0 20px;
+    margin: 0 30px;
 }
 
 .week-container {
@@ -22,19 +22,7 @@ h1 {
     justify-content: center;
 }
 
-.week-button {
-    font-size: 4em;
-    background: none;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    padding: 20px;
-    margin: 0 10px;
-    line-height: 1;
-    text-align: center;
-}
-
-.week-button:focus {
+.h1:focus {
     outline: none;
 }
 
