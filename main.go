@@ -26,9 +26,9 @@ func main() {
 	version = strconv.FormatInt(time.Now().Unix(), 10)
 
 	http.Handle("/", cspHandler(gzipHandler(http.HandlerFunc(weekHandler))))
-	http.Handle("/previous/", cspHandler(http.HandlerFunc(previousWeekHandler)))
-	http.Handle("/next/", cspHandler(http.HandlerFunc(nextWeekHandler)))
-	http.Handle("/week/current/", cspHandler(http.HandlerFunc(currentWeekUpdateHandler)))
+	http.Handle("/api/previous/", cspHandler(http.HandlerFunc(previousWeekHandler)))
+	http.Handle("/api/next/", cspHandler(http.HandlerFunc(nextWeekHandler)))
+	http.Handle("/api/week/current/", cspHandler(http.HandlerFunc(currentWeekUpdateHandler)))
 	http.Handle("/static/", http.StripPrefix("/static/", cacheHandler(gzipHandler(http.FileServer(http.Dir("./static"))))))
 	http.Handle("/robots.txt", http.FileServer(http.Dir(".")))
 
@@ -62,11 +62,23 @@ func weekHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := tmpl.Execute(w, weekInfo); err != nil {
-		http.Error(w, fmt.Sprintf("Error executing template: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprint("Failed to handle the request please try again later."), http.StatusInternalServerError)
 	}
 }
 
-func handleWeekRequest(w http.ResponseWriter, r *http.Request, operation string) {
+func previousWeekHandler(w http.ResponseWriter, r *http.Request) {
+	handleWeekRequest(w, r, func(date time.Time) time.Time {
+		return date.AddDate(0, 0, -7)
+	})
+}
+
+func nextWeekHandler(w http.ResponseWriter, r *http.Request) {
+	handleWeekRequest(w, r, func(date time.Time) time.Time {
+		return date.AddDate(0, 0, 7)
+	})
+}
+
+func handleWeekRequest(w http.ResponseWriter, r *http.Request, operation func(time.Time) time.Time) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -78,33 +90,10 @@ func handleWeekRequest(w http.ResponseWriter, r *http.Request, operation string)
 		return
 	}
 
-	if operation != "add" && operation != "remove" {
-		http.Error(w, "Invalid operation", http.StatusBadRequest)
-		return
-	}
-
 	current := timeFromYearAndWeek(year, week)
-	fmt.Printf("Before: %s\n", current)
-	if operation == "add" {
-		current = current.AddDate(0, 0, 7)
-	} else if operation == "remove" {
-		current = current.AddDate(0, 0, -7)
-	}
-	fmt.Printf("After: %s\n", current)
+	current = operation(current)
 	year, week = current.ISOWeek()
-	weekInfo := getWeekInfo(year, week)
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(weekInfo); err != nil {
-		http.Error(w, fmt.Sprintf("Error encoding JSON: %v", err), http.StatusInternalServerError)
-	}
-}
-
-func previousWeekHandler(w http.ResponseWriter, r *http.Request) {
-	handleWeekRequest(w, r, "remove")
-}
-
-func nextWeekHandler(w http.ResponseWriter, r *http.Request) {
-	handleWeekRequest(w, r, "add")
+	sendWeekInfoResponse(w, year, week)
 }
 
 func currentWeekUpdateHandler(w http.ResponseWriter, r *http.Request) {
@@ -115,10 +104,14 @@ func currentWeekUpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 	now := time.Now()
 	year, week := now.ISOWeek()
+	sendWeekInfoResponse(w, year, week)
+}
+
+func sendWeekInfoResponse(w http.ResponseWriter, year int, week int) {
 	weekInfo := getWeekInfo(year, week)
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(weekInfo); err != nil {
-		http.Error(w, fmt.Sprintf("Error encoding JSON: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Failed to handle the request please try again later: %v", err), http.StatusInternalServerError)
 	}
 }
 
@@ -135,7 +128,7 @@ func parseWeekYearFromRequest(r *http.Request) (int, int, error) {
 				if yearArgs, err := strconv.Atoi(yearParam); err == nil {
 					year = yearArgs
 				} else {
-					return 0, 0, fmt.Errorf("invalid year number: %v", err)
+					return 0, 0, fmt.Errorf("Invalid year number: %s", yearParam)
 				}
 			}
 		}
@@ -146,7 +139,7 @@ func parseWeekYearFromRequest(r *http.Request) (int, int, error) {
 				if weekArgs, err := strconv.Atoi(weekParam); err == nil {
 					week = weekArgs
 				} else {
-					return 0, 0, fmt.Errorf("invalid week number: %v", err)
+					return 0, 0, fmt.Errorf("Invalid week number: %s", weekParam)
 				}
 			}
 		}

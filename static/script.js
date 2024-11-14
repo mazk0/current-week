@@ -21,9 +21,9 @@ function updateWeek(direction) {
     console.log(currentYear);
     let url = '';
     if (direction === 'previous') {
-        url = `/previous/year/${currentYear}/week/${currentWeek}`;
+        url = `/api/previous/year/${currentYear}/week/${currentWeek}`;
     } else if (direction === 'next') {
-        url = `/next/year/${currentYear}/week/${currentWeek}`;
+        url = `/api/next/year/${currentYear}/week/${currentWeek}`;
     }
 
     fetch(url)
@@ -33,7 +33,7 @@ function updateWeek(direction) {
 }
 
 function resetToCurrentWeek() {
-    fetch(`/week/current`)
+    fetch(`/api/week/current`)
         .then(response => response.json())
         .then(data => updateWeekInfo(data))
         .catch(error => console.error('Error:', error));
