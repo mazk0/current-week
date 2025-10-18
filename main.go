@@ -23,7 +23,7 @@ func main() {
 		return
 	}
 
-	version = strconv.FormatInt(time.Now().Unix(), 10)
+	
 
 	http.Handle("/", cspHandler(gzipHandler(http.HandlerFunc(weekHandler))))
 	http.Handle("/api/previous/", cspHandler(http.HandlerFunc(previousWeekHandler)))
