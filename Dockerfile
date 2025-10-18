@@ -1,5 +1,5 @@
 # Use the latest official Golang image to build the application
-FROM golang:latest AS builder
+FROM golang:1.25.3-alpine AS builder
 
 # Build arguments
 ARG TARGETOS
