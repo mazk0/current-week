@@ -15,9 +15,9 @@
 </head>
 <body>
     <div class="week-container">
-        <h1 id="prevWeekButton">&#x276E;</h1>
-        <h1 id="week">{{.Week}}</h1>
-        <h1 id="nextWeekButton">&#x276F;</h1>
+        <button id="prevWeekButton" class="nav-button" aria-label="Previous week">&#x276E;</button>
+        <button id="week" class="week-button" aria-label="Current week">{{.Week}}</button>
+        <button id="nextWeekButton" class="nav-button" aria-label="Next week">&#x276F;</button>
     </div>
     <p id="dateRange" class="date-range">
         <span id="firstDate" class="date">{{.FirstDate}}</span>

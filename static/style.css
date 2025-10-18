@@ -11,9 +11,7 @@ body {
 }
 
 h1 {
-    font-size: 4em;
     text-align: center;
-    margin: 0 30px;
 }
 
 .week-container {
@@ -21,6 +19,27 @@ h1 {
     align-items: center;
     justify-content: center;
 }
+
+.nav-button,
+.week-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: default;
+    font-family: Arial, sans-serif;
+    font-size: 4em;
+    margin: 0 30px;
+    padding: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.week-button {
+    font-weight: bold;
+}
+
 
 .h1:focus {
     outline: none;
@@ -70,12 +89,4 @@ footer {
     .date-range .dash {
         width: 100%;
     }
-}
-
-#prevWeekButton, #week, #nextWeekButton {
-    cursor: default;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
