@@ -38,10 +38,10 @@ jobs:
           build-args: |
             VERSION=${{ github.sha }}
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:${{ github.ref_name }}
+            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:${{ github.ref_name }}
           labels: |
-            org.opencontainers.image.title=${{ github.repository }}
+            org.opencontainers.image.title=${{ github.event.repository.name }}
             org.opencontainers.image.description=A web application that displays the current week number along with the week's starting and ending dates.
             org.opencontainers.image.url=https://github.com/${{ github.repository }}
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
