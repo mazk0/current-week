@@ -6,20 +6,17 @@ func getFirstAndLastDateOfWeek(year, week int) (time.Time, time.Time) {
 	// January 4th is always in week 1 according to ISO 8601
 	referenceDate := time.Date(year, time.January, 4, 0, 0, 0, 0, time.UTC)
 
-	// Find the first ISO week of the year
-	isoYear, isoWeek := referenceDate.ISOWeek()
-	for isoYear < year || (isoYear == year && isoWeek != 1) {
-		referenceDate = referenceDate.AddDate(0, 0, -1)
-		isoYear, isoWeek = referenceDate.ISOWeek()
-	}
+	// Calculate the offset to get to the Monday of the first ISO week
+	// Monday is 1, so if Weekday is Monday(1), offset is 0.
+	// Sunday is 0, so if Weekday is Sunday(0), offset is 6.
+	// (Weekday + 6) % 7 gives the correct offset (0 for Mon, 1 for Tue, ..., 6 for Sun)
+	offset := (int(referenceDate.Weekday()) + 6) % 7
 
-	// Move back to the Monday of the first ISO week
-	for referenceDate.Weekday() != time.Monday {
-		referenceDate = referenceDate.AddDate(0, 0, -1)
-	}
+	// Move to the Monday of the first ISO week
+	firstWeekMonday := referenceDate.AddDate(0, 0, -offset)
 
 	// Now we move to the start of the desired week by adding (week - 1) weeks
-	firstDateOfWeek := referenceDate.AddDate(0, 0, (week-1)*7)
+	firstDateOfWeek := firstWeekMonday.AddDate(0, 0, (week-1)*7)
 	lastDateOfWeek := firstDateOfWeek.AddDate(0, 0, 6)
 
 	return firstDateOfWeek, lastDateOfWeek
