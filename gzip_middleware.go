@@ -2,9 +2,17 @@ package main
 
 import (
 	"compress/gzip"
+	"io"
 	"net/http"
 	"strings"
+	"sync"
 )
+
+var gzipPool = sync.Pool{
+	New: func() interface{} {
+		return gzip.NewWriter(io.Discard)
+	},
+}
 
 // gzipHandler wraps an http.Handler to compress responses with gzip
 func gzipHandler(next http.Handler) http.Handler {
@@ -17,8 +25,12 @@ func gzipHandler(next http.Handler) http.Handler {
 
 		// Create a gzip writer
 		w.Header().Set("Content-Encoding", "gzip")
-		gz := gzip.NewWriter(w)
-		defer gz.Close()
+		gz := gzipPool.Get().(*gzip.Writer)
+		gz.Reset(w)
+		defer func() {
+			gz.Close()
+			gzipPool.Put(gz)
+		}()
 
 		// Wrap the ResponseWriter
 		w = &gzipResponseWriter{ResponseWriter: w, Writer: gz}
