@@ -8,6 +8,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('week').addEventListener('click', function() {
         resetToCurrentWeek();
     });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            updateWeek('previous');
+        } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            updateWeek('next');
+        }
+    });
 });
 
 function updateWeek(direction) {
