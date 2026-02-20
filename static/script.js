@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
         resetToCurrentWeek();
     });
 
-    // Prevent text selection on rapid clicks
     document.getElementById('prevWeekButton').addEventListener('mousedown', function(e) {
         e.preventDefault();
     });
