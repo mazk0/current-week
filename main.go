@@ -9,6 +9,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"CurrentWeek/internal/middleware"
+	"CurrentWeek/internal/week"
 )
 
 var tmpl *template.Template
@@ -25,11 +28,11 @@ func main() {
 
 	
 
-	http.Handle("/", cspHandler(gzipHandler(http.HandlerFunc(weekHandler))))
-	http.Handle("/api/previous/", cspHandler(http.HandlerFunc(previousWeekHandler)))
-	http.Handle("/api/next/", cspHandler(http.HandlerFunc(nextWeekHandler)))
-	http.Handle("/api/week/current/", cspHandler(http.HandlerFunc(currentWeekUpdateHandler)))
-	http.Handle("/static/", http.StripPrefix("/static/", cacheHandler(gzipHandler(http.FileServer(http.Dir("./static"))))))
+	http.Handle("/", middleware.CspHandler(middleware.GzipHandler(http.HandlerFunc(weekHandler))))
+	http.Handle("/api/previous/", middleware.CspHandler(http.HandlerFunc(previousWeekHandler)))
+	http.Handle("/api/next/", middleware.CspHandler(http.HandlerFunc(nextWeekHandler)))
+	http.Handle("/api/week/current/", middleware.CspHandler(http.HandlerFunc(currentWeekUpdateHandler)))
+	http.Handle("/static/", http.StripPrefix("/static/", middleware.CacheHandler(middleware.GzipHandler(http.FileServer(http.Dir("./static"))))))
 	http.Handle("/robots.txt", http.FileServer(http.Dir(".")))
 
 	port := "8080"
@@ -45,16 +48,16 @@ func weekHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	year, week, err := parseWeekYearFromRequest(r)
+	year, weekNum, err := parseWeekYearFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	firstDateOfWeek, lastDateOfWeek := getFirstAndLastDateOfWeek(year, week)
+	firstDateOfWeek, lastDateOfWeek := week.GetFirstAndLastDateOfWeek(year, weekNum)
 
-	weekInfo := WeekInfoTemplate{
-		Week:       week,
+	weekInfo := week.WeekInfoTemplate{
+		Week:       weekNum,
 		FirstDate:  firstDateOfWeek.Format("2006-01-02"),
 		LastDate:   lastDateOfWeek.Format("2006-01-02"),
 		Version:    version,
@@ -84,16 +87,16 @@ func handleWeekRequest(w http.ResponseWriter, r *http.Request, operation func(ti
 		return
 	}
 
-	year, week, err := parseWeekYearFromRequest(r)
+	year, weekNum, err := parseWeekYearFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	current := timeFromYearAndWeek(year, week)
+	current := week.TimeFromYearAndWeek(year, weekNum)
 	current = operation(current)
-	year, week = current.ISOWeek()
-	sendWeekInfoResponse(w, year, week)
+	year, weekNum = current.ISOWeek()
+	sendWeekInfoResponse(w, year, weekNum)
 }
 
 func currentWeekUpdateHandler(w http.ResponseWriter, r *http.Request) {
@@ -103,12 +106,12 @@ func currentWeekUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	now := time.Now()
-	year, week := now.ISOWeek()
-	sendWeekInfoResponse(w, year, week)
+	year, weekNum := now.ISOWeek()
+	sendWeekInfoResponse(w, year, weekNum)
 }
 
-func sendWeekInfoResponse(w http.ResponseWriter, year int, week int) {
-	weekInfo := getWeekInfo(year, week)
+func sendWeekInfoResponse(w http.ResponseWriter, year int, weekNum int) {
+	weekInfo := getWeekInfo(year, weekNum)
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(weekInfo); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to handle the request please try again later: %v", err), http.StatusInternalServerError)
@@ -117,7 +120,7 @@ func sendWeekInfoResponse(w http.ResponseWriter, year int, week int) {
 
 func parseWeekYearFromRequest(r *http.Request) (int, int, error) {
 	now := time.Now()
-	year, week := now.ISOWeek()
+	year, weekNum := now.ISOWeek()
 
 	pathParts := strings.Split(r.URL.Path, "/")
 	if len(pathParts) > 2 {
@@ -137,7 +140,7 @@ func parseWeekYearFromRequest(r *http.Request) (int, int, error) {
 			weekParam := pathParts[weekIndex+1]
 			if weekParam != "" {
 				if weekArgs, err := strconv.Atoi(weekParam); err == nil {
-					week = weekArgs
+					weekNum = weekArgs
 				} else {
 					return 0, 0, fmt.Errorf("Invalid week number: %s", weekParam)
 				}
@@ -145,13 +148,13 @@ func parseWeekYearFromRequest(r *http.Request) (int, int, error) {
 		}
 	}
 
-	return year, week, nil
+	return year, weekNum, nil
 }
 
-func getWeekInfo(year int, week int) WeekInfo {
-	firstDateOfWeek, lastDateOfWeek := getFirstAndLastDateOfWeek(year, week)
-	return WeekInfo{
-		Week:      week,
+func getWeekInfo(year int, weekNum int) week.WeekInfo {
+	firstDateOfWeek, lastDateOfWeek := week.GetFirstAndLastDateOfWeek(year, weekNum)
+	return week.WeekInfo{
+		Week:      weekNum,
 		FirstDate: firstDateOfWeek.Format("2006-01-02"),
 		LastDate:  lastDateOfWeek.Format("2006-01-02"),
 	}

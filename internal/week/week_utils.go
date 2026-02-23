@@ -1,8 +1,8 @@
-package main
+package week
 
 import "time"
 
-func getFirstAndLastDateOfWeek(year, week int) (time.Time, time.Time) {
+func GetFirstAndLastDateOfWeek(year, week int) (time.Time, time.Time) {
 	// January 4th is always in week 1 according to ISO 8601
 	referenceDate := time.Date(year, time.January, 4, 0, 0, 0, 0, time.UTC)
 
@@ -25,7 +25,7 @@ func getFirstAndLastDateOfWeek(year, week int) (time.Time, time.Time) {
 	return firstDateOfWeek, lastDateOfWeek
 }
 
-func getNumberOfWeeks(year int) int {
+func GetNumberOfWeeks(year int) int {
 	// December 28th is always in the last week according to ISO 8601
 	endDate := time.Date(year, time.December, 28, 0, 0, 0, 0, time.UTC)
 	_, lastWeek := endDate.ISOWeek()
@@ -33,7 +33,7 @@ func getNumberOfWeeks(year int) int {
 	return lastWeek
 }
 
-func timeFromYearAndWeek(year, week int) time.Time {
+func TimeFromYearAndWeek(year, week int) time.Time {
 	// January 4th is always in the first week of the year
 	jan4 := time.Date(year, time.January, 4, 0, 0, 0, 0, time.UTC)
 	// Find the Monday of the first week of the year
