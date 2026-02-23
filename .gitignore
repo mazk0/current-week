@@ -26,3 +26,8 @@ go.work.sum
 
 # macOS Finder directory files
 .DS_Store
+
+# Node.js
+node_modules/
+playwright-report/
+test-results/
