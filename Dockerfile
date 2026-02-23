@@ -1,5 +1,5 @@
 # Use the official Go image as a base image
-FROM golang:1.25.3-alpine AS builder
+FROM golang:1.26.0-alpine AS builder
 
 # Add build arguments
 ARG VERSION
