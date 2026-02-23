@@ -119,28 +119,37 @@ func parseWeekYearFromRequest(r *http.Request) (int, int, error) {
 	now := time.Now()
 	year, week := now.ISOWeek()
 
-	pathParts := strings.Split(r.URL.Path, "/")
-	if len(pathParts) > 2 {
-		yearIndex := indexOf(pathParts, "year")
-		if yearIndex > -1 && yearIndex+1 < len(pathParts) {
-			yearParam := pathParts[yearIndex+1]
-			if yearParam != "" {
-				if yearArgs, err := strconv.Atoi(yearParam); err == nil {
-					year = yearArgs
-				} else {
-					return 0, 0, fmt.Errorf("Invalid year number: %s", yearParam)
-				}
+	path := r.URL.Path
+	if idx := strings.Index(path, "/year/"); idx != -1 {
+		start := idx + 6 // len("/year/")
+		rest := path[start:]
+		end := strings.Index(rest, "/")
+		if end == -1 {
+			end = len(rest)
+		}
+		yearParam := rest[:end]
+		if yearParam != "" {
+			if yearArgs, err := strconv.Atoi(yearParam); err == nil {
+				year = yearArgs
+			} else {
+				return 0, 0, fmt.Errorf("Invalid year number: %s", yearParam)
 			}
 		}
-		weekIndex := indexOf(pathParts, "week")
-		if weekIndex > -1 && weekIndex+1 < len(pathParts) {
-			weekParam := pathParts[weekIndex+1]
-			if weekParam != "" {
-				if weekArgs, err := strconv.Atoi(weekParam); err == nil {
-					week = weekArgs
-				} else {
-					return 0, 0, fmt.Errorf("Invalid week number: %s", weekParam)
-				}
+	}
+
+	if idx := strings.Index(path, "/week/"); idx != -1 {
+		start := idx + 6 // len("/week/")
+		rest := path[start:]
+		end := strings.Index(rest, "/")
+		if end == -1 {
+			end = len(rest)
+		}
+		weekParam := rest[:end]
+		if weekParam != "" {
+			if weekArgs, err := strconv.Atoi(weekParam); err == nil {
+				week = weekArgs
+			} else {
+				return 0, 0, fmt.Errorf("Invalid week number: %s", weekParam)
 			}
 		}
 	}
