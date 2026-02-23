@@ -1,4 +1,4 @@
-package main
+package middleware
 
 import (
 	"compress/gzip"
@@ -14,8 +14,8 @@ var gzipPool = sync.Pool{
 	},
 }
 
-// gzipHandler wraps an http.Handler to compress responses with gzip
-func gzipHandler(next http.Handler) http.Handler {
+// GzipHandler wraps an http.Handler to compress responses with gzip
+func GzipHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Check if the client accepts gzip encoding
 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {

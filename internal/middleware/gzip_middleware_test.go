@@ -1,4 +1,4 @@
-package main
+package middleware
 
 import (
 	"compress/gzip"
@@ -9,7 +9,7 @@ import (
 )
 
 func BenchmarkGzipMiddleware(b *testing.B) {
-	handler := gzipHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	handler := GzipHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Write enough data to make gzip actually do some work
 		data := make([]byte, 1024)
 		for i := range data {
@@ -30,7 +30,7 @@ func BenchmarkGzipMiddleware(b *testing.B) {
 }
 
 func TestGzipMiddlewareCorrectness(t *testing.T) {
-	handler := gzipHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	handler := GzipHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello World"))
 	}))
 

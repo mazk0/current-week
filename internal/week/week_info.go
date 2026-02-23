@@ -1,4 +1,4 @@
-package main
+package week
 
 type WeekInfo struct {
 	Week      int
