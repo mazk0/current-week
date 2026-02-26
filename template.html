@@ -14,16 +14,18 @@
     <script src="/static/script.js?v={{.Version}}" defer></script>
 </head>
 <body>
-    <div class="week-container">
-        <button id="prevWeekButton" class="nav-button" aria-label="Previous week">&#x276E;</button>
-        <button id="week" class="week-button" aria-label="Current week">{{.Week}}</button>
-        <button id="nextWeekButton" class="nav-button" aria-label="Next week">&#x276F;</button>
-    </div>
-    <p id="dateRange" class="date-range">
-        <span id="firstDate" class="date">{{.FirstDate}}</span>
-        <span class="dash"> - </span>
-        <span id="lastDate" class="date">{{.LastDate}}</span>
-    </p>
+    <main>
+        <div class="week-container">
+            <button id="prevWeekButton" class="nav-button" aria-label="Previous week">&#x276E;</button>
+            <button id="week" class="week-button" aria-label="Current week">{{.Week}}</button>
+            <button id="nextWeekButton" class="nav-button" aria-label="Next week">&#x276F;</button>
+        </div>
+        <p id="dateRange" class="date-range">
+            <span id="firstDate" class="date">{{.FirstDate}}</span>
+            <span class="dash"> - </span>
+            <span id="lastDate" class="date">{{.LastDate}}</span>
+        </p>
+    </main>
     <footer>
         <a href="{{.GitHubRepo}}" target="_blank" class="github-link">View on GitHub</a>
     </footer>
