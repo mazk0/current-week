@@ -38,7 +38,6 @@ function updateWeek(direction) {
     const lastDateYear = lastDateText.split('-')[0];
 
     const currentYear = parseInt(currentWeek) > 50 && (parseInt(firstDateYear) < parseInt(lastDateYear)) ? firstDateYear : lastDateYear;
-    console.log(currentYear);
     let url = '';
     if (direction === 'previous') {
         url = `/api/previous/year/${currentYear}/week/${currentWeek}`;
