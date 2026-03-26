@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (event.key === 'ArrowRight') {
             event.preventDefault();
             updateWeek('next');
+        } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            resetToCurrentWeek();
         }
     });
 });

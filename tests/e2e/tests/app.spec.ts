@@ -48,4 +48,19 @@ test.describe('Current Week App', () => {
     // Verify it's back to initial
     await expect(weekElement).toHaveText(initialWeekText);
   });
+
+  test('resets to current week on ArrowUp', async ({ page }) => {
+    const weekElement = page.locator('#week');
+    const initialWeekText = await weekElement.innerText();
+
+    // Navigate away first
+    await page.locator('#nextWeekButton').click();
+    await expect(weekElement).not.toHaveText(initialWeekText);
+
+    // Press ArrowUp to reset
+    await page.keyboard.press('ArrowUp');
+
+    // Verify it's back to initial
+    await expect(weekElement).toHaveText(initialWeekText);
+  });
 });
